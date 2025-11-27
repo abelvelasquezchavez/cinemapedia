@@ -61,7 +61,6 @@ class _HomeViewState extends ConsumerState<_HomeView> {
             centerTitle: true,
           ),
         ),
-
         SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
             return Column(
@@ -71,7 +70,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
                 MovieHorizontalListview(
                   movies: nowPlayingMovies,
                   title: 'En Cines',
-                  subtitle: "Lunes 20",
+                  subTitle: "Lunes 20",
                   loadNextPage: () => ref
                       .read(nowPlayingMoviesProvider.notifier)
                       .loadNextPage(),
@@ -80,7 +79,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
                 MovieHorizontalListview(
                   movies: upcomingMovies,
                   title: 'Proximamente',
-                  subtitle: "En este mes",
+                  subTitle: "En este mes",
                   loadNextPage: () =>
                       ref.read(upcomingMoviesProvider.notifier).loadNextPage(),
                 ),
@@ -96,7 +95,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
                 MovieHorizontalListview(
                   movies: topRatedMovies,
                   title: 'Mejor Calificacion',
-                  subtitle: "De todos los tiempos",
+                  subTitle: "De todos los tiempos",
                   loadNextPage: () =>
                       ref.read(topRatedMoviesProvider.notifier).loadNextPage(),
                 ),

@@ -1,22 +1,22 @@
-import 'package:animate_do/animate_do.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
-import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:go_router/go_router.dart';
 
 class MovieHorizontalListview extends StatefulWidget {
   final List<Movie> movies;
   final String? title;
-  final String? subtitle;
+  final String? subTitle;
   final VoidCallback? loadNextPage;
 
-  const MovieHorizontalListview({
-    super.key,
-    required this.movies,
-    this.title,
-    this.subtitle,
-    this.loadNextPage,
-  });
+  const MovieHorizontalListview(
+      {super.key,
+      required this.movies,
+      this.title,
+      this.subTitle,
+      this.loadNextPage});
 
   @override
   State<MovieHorizontalListview> createState() =>
@@ -29,13 +29,13 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
   @override
   void initState() {
     super.initState();
+
     scrollController.addListener(() {
+      if (widget.loadNextPage == null) return;
+
       if ((scrollController.position.pixels + 200) >=
           scrollController.position.maxScrollExtent) {
-        print('load next page');
-        //if (widget.loadNextPage != null) {
         widget.loadNextPage!();
-        //}
       }
     });
   }
@@ -52,20 +52,19 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
       height: 350,
       child: Column(
         children: [
-          if (widget.title != null || widget.subtitle != null)
-            _Title(title: widget.title, subtitle: widget.subtitle),
-
+          if (widget.title != null || widget.subTitle != null)
+            _Title(title: widget.title, subTitle: widget.subTitle),
           Expanded(
-            child: ListView.builder(
-              controller: scrollController,
-              itemCount: widget.movies.length,
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                return FadeInRight(child: _Slide(movie: widget.movies[index]));
-              },
-            ),
-          ),
+              child: ListView.builder(
+            controller: scrollController,
+            itemCount: widget.movies.length,
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              return FadeInRight(child: _Slide(movie: widget.movies[index]));
+              //return _Slide(movie: widget.movies[index]);
+            },
+          ))
         ],
       ),
     );
@@ -86,7 +85,7 @@ class _Slide extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image
+          //* Imagen
           SizedBox(
             width: 150,
             child: ClipRRect(
@@ -100,11 +99,9 @@ class _Slide extends StatelessWidget {
                     return const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
+                          child: CircularProgressIndicator(strokeWidth: 2)),
                     );
                   }
-
                   return GestureDetector(
                     onTap: () => context.push('/movie/${movie.id}'),
                     child: FadeIn(child: child),
@@ -116,35 +113,32 @@ class _Slide extends StatelessWidget {
 
           const SizedBox(height: 5),
 
-          //Title
+          //* Title
           SizedBox(
             width: 150,
-            child: Text(movie.title, maxLines: 2, style: textStyles.titleSmall),
+            child: Text(
+              movie.title,
+              maxLines: 2,
+              style: textStyles.titleSmall,
+            ),
           ),
 
-          //Ratting
+          //* Rating
           SizedBox(
             width: 150,
             child: Row(
               children: [
                 Icon(Icons.star_half_outlined, color: Colors.yellow.shade800),
                 const SizedBox(width: 3),
-                Text(
-                  '${movie.voteAverage}',
-                  style: textStyles.bodyMedium?.copyWith(
-                    color: Colors.yellow.shade800,
-                  ),
-                ),
+                Text('${movie.voteAverage}',
+                    style: textStyles.bodyMedium
+                        ?.copyWith(color: Colors.yellow.shade800)),
                 const Spacer(),
-                Text(
-                  HumanFormats.number(movie.popularity),
-                  style: textStyles.bodySmall,
-                ),
-
-                //Text('${HumanFormats.number(movie.voteCount!.toDouble())} '),
+                Text(HumanFormats.number(movie.popularity),
+                    style: textStyles.bodySmall),
               ],
             ),
-          ),
+          )
         ],
       ),
     );
@@ -153,26 +147,26 @@ class _Slide extends StatelessWidget {
 
 class _Title extends StatelessWidget {
   final String? title;
-  final String? subtitle;
+  final String? subTitle;
 
-  const _Title({this.title, this.subtitle});
+  const _Title({this.title, this.subTitle});
 
   @override
   Widget build(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.titleLarge;
+
     return Container(
       padding: const EdgeInsets.only(top: 10),
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         children: [
           if (title != null) Text(title!, style: titleStyle),
           const Spacer(),
-          if (subtitle != null)
+          if (subTitle != null)
             FilledButton.tonal(
-              style: const ButtonStyle(visualDensity: VisualDensity.compact),
-              onPressed: () {},
-              child: Text(subtitle!),
-            ),
+                style: const ButtonStyle(visualDensity: VisualDensity.compact),
+                onPressed: () {},
+                child: Text(subTitle!))
         ],
       ),
     );

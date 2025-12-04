@@ -9,13 +9,16 @@ typedef SearchMovieCallback = Future<List<Movie>> Function(String query);
 
 class SearchMovieDelegate extends SearchDelegate<Movie?> {
   final SearchMovieCallback searchMovies;
-  final List<Movie> initialMovies;
+  List<Movie> initialMovies;
 
   StreamController<List<Movie>> debounceMovies = StreamController.broadcast();
   Timer? _debounceTimer;
 
-  SearchMovieDelegate(
-      {required this.searchMovies, required this.initialMovies});
+  SearchMovieDelegate({required this.searchMovies, required this.initialMovies})
+      : super(
+          searchFieldLabel: 'Buscar Película',
+          textInputAction: TextInputAction.done,
+        );
 
   void clearStreams() {
     debounceMovies.close();
@@ -31,8 +34,27 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
       }
 
       final movies = await searchMovies(query);
+      initialMovies = movies;
       debounceMovies.add(movies);
     });
+  }
+
+  Widget buildResultsAndSuggestions() {
+    return StreamBuilder(
+        initialData: initialMovies,
+        stream: debounceMovies.stream,
+        builder: (context, snapshot) {
+          final movies = snapshot.data ?? [];
+
+          return ListView.builder(
+              itemCount: movies.length,
+              itemBuilder: (context, index) => _MovieItem(
+                  movie: movies[index],
+                  onMovieSelected: (context, movie) {
+                    clearStreams();
+                    close(context, movie);
+                  }));
+        });
   }
 
   @override
@@ -64,29 +86,13 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return const Text('BuildResults');
+    return buildResultsAndSuggestions();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     _onQueryChanged(query);
-    return StreamBuilder(
-        //future: searchMovies(query),
-        initialData: initialMovies,
-        stream: debounceMovies.stream,
-        builder: (context, snapshot) {
-          //! print('Realizando Peticiones');
-
-          final movies = snapshot.data ?? [];
-          return ListView.builder(
-              itemCount: movies.length,
-              itemBuilder: (context, index) => _MovieItem(
-                  movie: movies[index],
-                  onMovieSelected: (context, movie) {
-                    clearStreams();
-                    close(context, movie);
-                  }));
-        });
+    return buildResultsAndSuggestions();
   }
 }
 

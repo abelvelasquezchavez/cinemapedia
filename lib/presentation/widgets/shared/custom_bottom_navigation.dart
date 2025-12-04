@@ -6,14 +6,14 @@ class CustomBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      items: [
+      items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_max), label: 'Inicio'),
         BottomNavigationBarItem(
           icon: Icon(Icons.label_outline),
           label: 'Categorias',
         ),
         BottomNavigationBarItem(
-          icon: const Icon(Icons.favorite_outline),
+          icon: Icon(Icons.favorite_outline),
           label: 'Favoritos',
         ),
       ],

@@ -10,7 +10,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: _HomeView(),
       bottomNavigationBar: CustomBottomNavigation(),
     );
@@ -54,7 +54,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
+        const SliverAppBar(
           floating: true,
           flexibleSpace: FlexibleSpaceBar(
             title: CustomAppbar(),

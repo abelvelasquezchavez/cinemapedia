@@ -5,10 +5,9 @@ class ActorMapper {
   static Actor castToEntity(Cast cast) => Actor(
         id: cast.id,
         name: cast.name,
-        profilePath:
-            (cast.profilePath != null && cast.profilePath!.trim().isNotEmpty)
-                ? 'https://image.tmdb.org/t/p/w500${cast.profilePath}'
-                : 'https://i.stack.imgur.com/GNhxO.png',
+        profilePath: (cast.profilePath != "" && cast.profilePath != null)
+            ? 'https://image.tmdb.org/t/p/w500${cast.profilePath}'
+            : 'https://i.stack.imgur.com/GNhxO.png',
         character: cast.character,
       );
 }
